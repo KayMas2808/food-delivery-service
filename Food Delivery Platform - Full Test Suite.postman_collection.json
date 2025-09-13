@@ -1,0 +1,121 @@
+{
+	"info": {
+		"_postman_id": "fbe84ee3-6799-4850-8876-459789a83d88",
+		"name": "Food Delivery Platform - Full Test Suite",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40541581"
+	},
+	"item": [
+		{
+			"name": "1. Successful Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": \"123\",\n    \"restaurantId\": \"456\",\n    \"items\": []\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/order/place",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"order",
+						"place"
+					]
+				},
+				"description": "Places a new food order through the API Gateway. This tests the 'happy path'."
+			},
+			"response": []
+		},
+		{
+			"name": "2. Order with Payment Failure",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": \"FAIL_PAYMENT\",\n    \"restaurantId\": \"456\",\n    \"items\": []\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/order/place",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"order",
+						"place"
+					]
+				},
+				"description": "Simulates a payment failure. The `order-service` will catch this and trigger a compensating transaction.\n\n**Expected Response:** `Payment failed, order rolled back`"
+			},
+			"response": []
+		},
+		{
+			"name": "3. Order with Delivery Failure",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": \"FAIL_DELIVERY\",\n    \"restaurantId\": \"456\",\n    \"items\": []\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/order/place",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"order",
+						"place"
+					]
+				},
+				"description": "Simulates a delivery assignment failure. This should roll back both the payment and the food reservation.\n\n**Expected Response:** `Failed to assign delivery partner, order rolled back`"
+			},
+			"response": []
+		},
+		{
+			"name": "4. Summary - Aggregator",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/order/summary/ABC-123",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"order",
+						"summary",
+						"ABC-123"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
