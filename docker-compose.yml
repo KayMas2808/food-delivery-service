@@ -4,19 +4,32 @@ services:
     build: ./order-service
     ports: 
       - "9001:9001"
+    depends_on:
+      - delivery-service
+      - restaurant-service
+      - customer-service
+
   delivery-service:
     build: ./delivery-service
     ports: 
       - "9004:9004"
+
   restaurant-service:
     build: ./restaurant-service
     ports: 
       - "9003:9003"
+
   customer-service:
     build: ./customer-service
     ports: 
       - "9002:9002"
+
   api-gateway:
     build: ./api-gateway
     ports: 
       - "8080:8080"
+    depends_on:
+      - order-service
+      - delivery-service
+      - restaurant-service
+      - customer-service
