@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  order-service:
+    build: ./order-service
+    ports: 
+      - "9001:9001"
+  delivery-service:
+    build: ./delivery-service
+    ports: 
+      - "9004:9004"
+  restaurant-service:
+    build: ./restaurant-service
+    ports: 
+      - "9003:9003"
+  customer-service:
+    build: ./customer-service
+    ports: 
+      - "9002:9002"
+  api-gateway:
+    build: ./api-gateway
+    ports: 
+      - "8080:8080"

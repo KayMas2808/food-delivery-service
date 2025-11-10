@@ -21,7 +21,7 @@ public class OrderController {
     public String placeOrder(@RequestBody Map<String, Object> orderRequest) {
         String customerId = (String) orderRequest.getOrDefault("customerId", "");
 
-        String restaurantResponse = restTemplate.postForObject("http://localhost:9003/restaurant/reserve", orderRequest,
+        String restaurantResponse = restTemplate.postForObject("http://restaurant-service:9003/restaurant/reserve", orderRequest,
                 String.class);
         if (!"RESERVED".equals(restaurantResponse)) {
             return "Failed to reserve food";
@@ -34,7 +34,7 @@ public class OrderController {
         }
 
         if (!"SUCCESS".equals(paymentResponse)) {
-            restTemplate.postForObject("http://localhost:9003/restaurant/release", orderRequest, String.class);
+            restTemplate.postForObject("http://restaurant-service:9003/restaurant/release", orderRequest, String.class);
             System.out.println("Payment failed, compensating by releasing food.");
             return "Payment failed, order rolled back";
         }
@@ -46,7 +46,7 @@ public class OrderController {
         }
 
         if (!"ASSIGNED".equals(deliveryResponse)) {
-            restTemplate.postForObject("http://localhost:9003/restaurant/release", orderRequest, String.class);
+            restTemplate.postForObject("http://restaurant-service:9003/restaurant/release", orderRequest, String.class);
 
             System.out.println("Delivery assignment failed, compensating by releasing food and refunding payment.");
             return "Failed to assign delivery partner, order rolled back";
@@ -55,6 +55,7 @@ public class OrderController {
 
         return "Order placed successfully!";
     }
+
     @GetMapping("/summary/{orderId}")
     public Map<String, Object> getOrderSummary(@PathVariable String orderId) {
         System.out.println("Aggregating data for order summary: " + orderId);
@@ -64,9 +65,9 @@ public class OrderController {
         String restaurantId = "456";
 
         // fetch data from multiple services
-        Object customerDetails = restTemplate.getForObject("http://localhost:9002/customer/" + customerId, Object.class);
-        Object restaurantDetails = restTemplate.getForObject("http://localhost:9003/restaurant/" + restaurantId, Object.class);
-        Object deliveryStatus = restTemplate.getForObject("http://localhost:9004/delivery/status/" + orderId, Object.class);
+        Object customerDetails = restTemplate.getForObject("http://customer-service:9002/customer/" + customerId, Object.class);
+        Object restaurantDetails = restTemplate.getForObject("http://restaurant-service:9003/restaurant/" + restaurantId, Object.class);
+        Object deliveryStatus = restTemplate.getForObject("http://delivery-service:9004/delivery/status/" + orderId, Object.class);
 
         // aggregate into a single response
         Map<String, Object> summary = new HashMap<>();
